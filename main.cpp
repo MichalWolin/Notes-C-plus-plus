@@ -93,6 +93,20 @@ int main() {
                 return y; }
         };
         std::cout << "Which one is bigger as int: " << biggerOne(1.6, 7.2) << '\n';
+
+        // Projection
+        std::ranges::sort(vec, {}, [](int x)->int{
+            return x % 10;
+        });
+
+        // Comparator
+        std::ranges::sort(vec.begin(), vec.end(), [](int x, int y){
+            if(x % 10 > y % 10){
+                return false;
+            }
+            return true;
+        });
+
     }
 
     // FILES
