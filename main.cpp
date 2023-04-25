@@ -31,7 +31,63 @@ void showAnyVec(std::vector<T> vec) {
     fmt::print("\n");
 }
 
+struct Student{
+    std::string name;
+    int studentNumber;
+    // Constructor
+    Student(std::string name, int studentNumber) : name(name), studentNumber(studentNumber){
+        fmt::print("I've created student :D\n");
+    }
+
+    // Copying constructor
+    Student(Student const &otherStudent) : name("someName"), studentNumber(1337){
+        fmt::print("I've copied student :D\n");
+    }
+
+    // Destructor
+    ~Student(){
+        fmt::print("I've destroyed student D:\n");
+    }
+};
+
+struct Base {
+    virtual void print() const {
+        fmt::print("Heaven :D\n");
+    }
+};
+
+struct Derived : Base {
+    void print() const override {
+        fmt::print("Hell :(\n");
+    }
+};
+
+void callPrintFunction(Base const &obj) {
+    obj.print();
+}
+
 int main() {
+    // Struct
+    {
+        Student newStudent = {"Wlodzimierz", 50};
+        auto copyOf = newStudent;
+
+        fmt::print("\n ----------Polymorphism of methods--------- \n");
+        auto b = Base();
+        b.print();
+
+        auto d = Derived();
+        d.print();
+
+        Base bd = Derived();
+        bd.print();
+
+        fmt::print("CPF\n");
+        callPrintFunction(b);
+        callPrintFunction(d);
+        callPrintFunction(bd);
+    }
+
     // VECTORS
     {
         std::vector<int> vec = {11,12,13,14,15,16,17,18,19,20,21};
