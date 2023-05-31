@@ -66,7 +66,214 @@ void callPrintFunction(Base const &obj) {
     obj.print();
 }
 
+void fMaxMin(const int *tab, const int size, int &max, int *min, int **cMax, int *&cMin){
+    int cntMax = 0, cntMin = 0;
+    for (int i = 0; i < size; ++i) {
+        if(max < tab[i]){
+            max = tab[i];
+            cntMax = 0;
+        }
+        if(*min > tab[i]){
+            *min = tab[i];
+            cntMin = 0;
+        }
+        if(max == tab[i]){
+            cntMax++;
+        }
+        if(*min == tab[i]){
+            cntMin++;
+        }
+    }
+    **cMax = cntMax;
+    *cMin = cntMin;
+}
+
+//fMaxMin2
+void fMaxMin(std::vector<int*> vec, int *max, int **min, int **&cMax, int *&cMin){
+    int cntMax = 0, cntMin = 0, mini = *vec[0], maxi = *vec[0];
+    for(int *i : vec){
+        if(maxi < *i){
+            maxi = *i;
+            cntMax = 0;
+        }
+        if(mini > *i){
+            mini = *i;
+            cntMin = 0;
+        }
+        if(maxi == *i){
+            cntMax++;
+        }
+        if(mini == *i){
+            cntMin++;
+        }
+    }
+
+    *max = maxi;
+    **min = mini;
+    **cMax = cntMax;
+    *cMin = cntMin;
+}
+
+//3
+void fMaxMin(std::vector<int*> vec, int **&max, int *&min, int **cMax, int *cMin){
+    int maxi = *vec[0], mini = *vec[0], cntMax = 0, cntMin = 0;
+    for(int *i : vec){
+        if(maxi < *i){
+            maxi = *i;
+            cntMax = 0;
+        }
+        if(mini > *i){
+            mini = *i;
+            cntMin = 0;
+        }
+        if(maxi == *i){
+            cntMax++;
+        }
+        if(mini == *i){
+            cntMin++;
+        }
+    }
+    **max = maxi;
+    *min = mini;
+    **cMax = cntMax;
+    *cMin = cntMin;
+}
+
+template<typename T>
+std::vector<T> operator+(const std::vector<T> &vec1, const std::vector<T> &vec2) {
+    auto result = std::vector<T>();
+    auto iterations = std::max(vec1.size(), vec2.size());
+    for (size_t i = 0; i < iterations; ++i) {
+        T value1 = (i < vec1.size()) ? vec1[i] : 0;
+        T value2 = (i < vec2.size()) ? vec2[i] : 0;
+        result.push_back(value1 + value2);
+    }
+    return result;
+}
+
+/*template<typename T>
+std::vector<T> operator+(const std::vector<T> &vec1, const std::vector<T> &vec2) {
+    auto result = std::vector<T>();
+    int sum1 = 0, sum2 = 0;
+    sum1 = vec1.front() + vec2.front();
+    sum2 = vec1.back() + vec2.back();
+    result.push_back(sum1);
+    result.push_back(sum2);
+    return result;
+}*/
+
+template<typename T>
+std::vector<T> operator*(const std::vector<T> &vec1, const std::vector<T> &vec2) {
+    auto result = std::vector<T>();
+    int ilo1 = 0, ilo2 = 0;
+    ilo1 = vec1.front() * vec2.front();
+    ilo2 = vec1.back() * vec2.back();
+    result.push_back(ilo1);
+    result.push_back(ilo2);
+    return result;
+}
+
 int main() {
+    {
+        const int size = 12;
+        int a[size] = {1, 2, 1, 42, 2, 2, 42, 1, 1, 2, 1, 42};
+        int max = a[0], min = a[0], cMax = 0, cMin = 0;
+        int *pcMax = &cMax;
+        int *pcMin = &cMin;
+        fMaxMin(a, size, max, &min, &pcMax, *&pcMin);
+
+        fmt::print("max -> {}\n", max);
+        fmt::print("min -> {}\n", min);
+        fmt::print("cMax -> {}\n", cMax);
+        fmt::print("cMin -> {}\n", cMin);
+    }
+
+    {
+        //fMaxMin2
+        auto vec = std::vector<int>{1,2,1,42,2,2,42,1,1,2,1,42};
+        auto vecP = std::vector<int*>();
+
+        for(auto &item : vec){
+            vecP.push_back(&item);
+        }
+
+        int max, min, cMax, cMin;
+
+        int *pmin = &min; // adres min/pointer na min
+        int *pcMax = &cMax; // pointer na cMax
+        int **ppcMax = &pcMax; //pointer na pointer
+        int *pcMin = &cMin; // pointer
+
+        fMaxMin(vecP, &max, &pmin, ppcMax, pcMin);
+
+        fmt::print("max {}\n", max);
+        fmt::print("min {}\n", min);
+        fmt::print("cmax {}\n", cMax);
+        fmt::print("cmin {}\n", cMin);
+
+        auto vec1 = std::vector<int>{1,2,3};
+        auto vec2 = std::vector<int>{6,2,3,4,5,6};
+
+        auto result = vec1 + vec2;
+        fmt::print("{}", result);
+    }
+
+    {
+        //3
+        auto vec = std::vector<int>{1,2,1,42,2,2,42,1,1,2,1,42};
+        auto vecP = std::vector<int*>();
+
+        for(auto &item : vec){
+            vecP.push_back(&item);
+        }
+
+        int max, min, cMax, cMin;
+
+        int *pmax = &max;
+        int **ppmax = &pmax;
+        int *pmin = &min;
+        int *pcMax = &cMax;
+
+        fMaxMin(vecP, ppmax, pmin, &pcMax, &cMin);
+
+        fmt::print("max {}\n", max);
+        fmt::print("min {}\n", min);
+        fmt::print("cmax {}\n", cMax);
+        fmt::print("cmin {}\n", cMin);
+
+        auto vec1 = std::vector<int>{1,2,3};
+        auto vec2 = std::vector<int>{6,2,3,4,5,6};
+
+        auto result = vec1 * vec2;
+        fmt::print("{}", result);
+
+        return 0;
+    }
+
+    {
+        using namespace std;
+
+        int x = 5;
+        int* px = &x; //adres x
+        int& rx = x; //alias na x
+        int** ppx = &px;//adres px
+        int*& rpx = px; //adres x
+
+        cout << x << endl; //5
+        cout << &x << endl; //@1 adres x
+        cout << px << endl; //@1 adres x
+        cout << &px << endl; //@2 adres px
+        cout << *px << endl; //5
+        cout << rx << endl; //5
+        cout << &rx << endl; //@1 adres x
+        cout << ppx << endl; //@2 adres px
+        cout << &ppx << endl; //@3 adres na ppx
+        cout << *ppx << endl; //@1
+        cout << **ppx << endl; //5
+        cout << rpx << endl; //@1
+        cout << *rpx << endl; //5
+        cout << &rpx << endl; //@1
+    }
     // Struct
     {
         Student newStudent = {"Wlodzimierz", 50};
